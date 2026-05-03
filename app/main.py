@@ -2,7 +2,11 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
-app = FastAPI()
+from app.utils.lifespan import lifespan
+
+app = FastAPI(
+    lifespan=lifespan
+)
 
 @app.get("/")
 def index():
