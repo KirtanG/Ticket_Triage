@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.ml.model import TicketClassifier
+from ml.model import TicketClassifier
 
 logger = logging.getLogger(__name__)
 

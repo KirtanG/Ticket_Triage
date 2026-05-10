@@ -2,11 +2,13 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
-from app.utils.lifespan import lifespan
+from utils.lifespan import lifespan
+from api.routes import router
 
 app = FastAPI(
     lifespan=lifespan
 )
+app.include_router(router=router)
 
 @app.get("/")
 def index():

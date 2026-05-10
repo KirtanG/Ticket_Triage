@@ -22,10 +22,9 @@ class TicketClassifier:
         Handles model loading and inference.
         """
         try:
-            self.tokeniser = AutoTokenizer.from_pretrained(r"./app/artifacts",local_files_only=True)
-            self.ort_session = InferenceSession(path_or_bytes=r"./app/artifacts/model.onnx")
+            self.tokeniser = AutoTokenizer.from_pretrained(r"./app/artifacts/tokenizer",local_files_only=True)
+            self.ort_session = InferenceSession(path_or_bytes=r"./app/artifacts/model/model.onnx")
             self.label_encoder = joblib.load(filename=r"./app/artifacts/encoder/label_encoder.joblib")
-            print(type(self.tokeniser))
         except Exception as e:
             logger.error(f"Failed to load model!")
             raise
