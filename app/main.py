@@ -13,7 +13,7 @@ app.include_router(router=router)
 @app.get("/")
 def index():
     return HTMLResponse(
-        content="<h1>The Server is running!<h1>"
+        content="<h2>The Server is running!<h2>"
     )
 
 if __name__ == "__main__":

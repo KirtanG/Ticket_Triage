@@ -27,7 +27,6 @@ class PredictionResponse(BaseModel):
         default=None,
         description="Probability scores for all classes"
     )
-    model_version: str = Field(description="Model version identifier")
 
 class HealthResponse(BaseModel):
     """Health check response."""
