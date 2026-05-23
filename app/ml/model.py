@@ -14,7 +14,7 @@ class TicketClassifier:
     def __init__(self) -> None:
         self.tokeniser : Union[None, ModernBertConfig] = None
         self.ort_session : Union[None, InferenceSession] = None
-        self.label_encoder : Union[None , LabelEncoder] = None 
+        self.label_encoder : Union[None, LabelEncoder] = None 
         self._load_model() 
 
     def _load_model(self) -> None:
@@ -60,7 +60,7 @@ class TicketClassifier:
         Predict class for a single ticket.
         
         Returns:
-            (predicted_class, confidence, all_scores, inference_time_ms)
+            (predicted_class, confidence, all_scores)
         """
         
         # Tokenize
