@@ -1,5 +1,5 @@
 import logging
-from typing import List, Dict , Tuple , Union
+from typing import List, Dict, Tuple, Union
 
 import joblib
 import numpy as np
@@ -7,14 +7,16 @@ from onnxruntime import InferenceSession
 from sklearn.preprocessing import LabelEncoder
 from transformers import AutoTokenizer, ModernBertConfig
 
+from utils.config import settings
+
 logger = logging.getLogger(__name__)
 
 class TicketClassifier:
 
     def __init__(self) -> None:
-        self.tokeniser : Union[None, ModernBertConfig] = None
-        self.ort_session : Union[None, InferenceSession] = None
-        self.label_encoder : Union[None, LabelEncoder] = None 
+        self.tokeniser :Union[None, ModernBertConfig] = None
+        self.ort_session :Union[None, InferenceSession] = None
+        self.label_encoder :Union[None, LabelEncoder] = None 
         self._load_model() 
 
     def _load_model(self) -> None:
@@ -22,28 +24,26 @@ class TicketClassifier:
         Handles model loading and inference.
         """
         try:
-            self.tokeniser = AutoTokenizer.from_pretrained(r"./app/artifacts/tokenizer",local_files_only=True)
-            self.ort_session = InferenceSession(path_or_bytes=r"./app/artifacts/model/model.onnx")
-            self.label_encoder = joblib.load(filename=r"./app/artifacts/encoder/label_encoder.joblib")
+            self.tokeniser = AutoTokenizer.from_pretrained(settings.tokenizer_path, local_files_only=True)
+            self.ort_session = InferenceSession(path_or_bytes=settings.onnx_model_path)
+            self.label_encoder = joblib.load(filename=settings.label_encoder_path)
         except Exception as e:
-            logger.error(f"Failed to load model!")
+            logger.error(f"Failed to load model!\n{e}")
             raise
         
-    def _tokenize(self,texts: List[str] ) -> Dict[str, np.ndarray]:
-        """
-        Tokenises the input.
-        """
+    def _tokenize(self, texts: List[str]) -> Dict[str, np.ndarray]:
+        """Tokenises the input."""
         inputs = self.tokeniser(
             texts,
-            padding = True,
-            truncation = True,
-            max_length = 256,
+            padding=True,
+            truncation=True,
+            max_length=256,
             return_tensors='np'
         )
 
         return {
-            "input_ids" : inputs['input_ids'].astype(np.int64),
-            "attention_mask": inputs['attention_mask'].astype(np.int64) 
+            "input_ids":inputs['input_ids'].astype(np.int64),
+            "attention_mask":inputs['attention_mask'].astype(np.int64) 
         }
     
     def _softmax(self, logits: np.ndarray) -> np.ndarray:
@@ -88,7 +88,7 @@ class TicketClassifier:
         
         logger.info(
             f"Prediction: {predicted_class} "
-            f"(confidence: {confidence:.3f}"
+            f"(confidence: {confidence:.3f})"
         )
         
         return predicted_class, confidence, all_scores
@@ -101,7 +101,7 @@ class TicketClassifier:
         Predict classes for multiple tickets.
         
         Returns:
-            (list of (predicted_class, confidence), total_inference_time_ms)
+            (list of (predicted_class, confidence))
         """
         
         # Tokenize batch
@@ -133,7 +133,13 @@ class TicketClassifier:
             and self.label_encoder is not None
         )
     
-    def model_status(self) -> Dict[str,bool]:
+    def model_status(self) -> Dict[str, bool]:
+        """
+        Checks the status of the loaded artifacts.
+
+        Returns:
+            dict: A dictionary containing the status of the model, tokeniser, and label encoder.
+        """
         return {
             "model": self.ort_session is not None,
             "tokeniser": self.tokeniser is not None,

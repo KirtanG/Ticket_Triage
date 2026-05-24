@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, Request, status
 from fastapi.exceptions import HTTPException
 
-from api.schemas import TicketRequest , PredictionResponse , BatchPredictionResponse , BatchTicketRequest    
+from api.schemas import TicketRequest, PredictionResponse, BatchPredictionResponse, BatchTicketRequest    
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ router = APIRouter(
     tags=["Version 1 Prediction Endpoints"]
 )
 
-@router.post("/predict",summary="Classify Single Ticker")
+@router.post("/predict", summary="Classify Single Ticker")
 async def predict_online( ticket: TicketRequest , request: Request):
     model = request.app.state.classifier
     
@@ -29,15 +29,13 @@ async def predict_online( ticket: TicketRequest , request: Request):
         predicted_class, confidence, all_scores  = model.predict_single(text)
 
         return PredictionResponse(
-            predicted_class = predicted_class,
-            confidence = confidence,
-            all_scores = all_scores
+            predicted_class=predicted_class,
+            confidence=confidence,
+            all_scores=all_scores
         )
 
     except Exception as e:
-
         logger.error(msg="An Exception occured in Online Prediction API"+str(e))
-
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Prediction failed!"
@@ -48,7 +46,7 @@ async def predict_online( ticket: TicketRequest , request: Request):
     response_model=BatchPredictionResponse,
     summary="Classify multiple tickets",
 )
-async def predict_batch(batch_tickets:BatchTicketRequest , request: Request):
+async def predict_batch(batch_tickets:BatchTicketRequest, request: Request):
     """
     Classify multiple IT support tickets in a single request.
     
@@ -64,11 +62,11 @@ async def predict_batch(batch_tickets:BatchTicketRequest , request: Request):
         )
     
     try:
-        predictions  = model.predict_batch(batch_tickets.tickets)
+        predictions = model.predict_batch(batch_tickets.tickets)
         
         batch_predictions = [
             pred_class
-            for text, (pred_class, conf) in zip(batch_tickets.tickets, predictions)
+            for _, (pred_class, conf) in zip(batch_tickets.tickets, predictions)
         ]
         
         return BatchPredictionResponse(

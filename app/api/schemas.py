@@ -1,4 +1,4 @@
-from typing import Dict,Optional,List
+from typing import Dict, Optional, List
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -44,9 +44,10 @@ class BatchTicketRequest(BaseModel):
             raise ValueError("Ticket list cannot be empty")
         # Strip whitespace
         return [text.strip() for text in v if text.strip()]
+        
 class BatchPredictionResponse(BaseModel):
     """Batch prediction response."""
-    predictions: List[float] = Field(description="Predicted ticket category")
+    predictions: List[str] = Field(description="Predicted ticket category")
 
 class HealthResponse(BaseModel):
     """Health check response."""

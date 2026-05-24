@@ -1,10 +1,10 @@
 import gradio as gr
 import requests
-import json
+from typing import Tuple
 
 BASE_URL = "http://localhost:8080/api/v1"
 
-def classify_ticket(text):
+def classify_ticket(text: str) -> Tuple[dict, str]:
     try:
         if not text or not text.strip():
             return {}, "**Error:** Ticket description cannot be empty."
@@ -28,7 +28,7 @@ def classify_ticket(text):
         return {}, f"**Error:** {str(e)}"
 
 
-def classify_batch(tickets_text):
+def classify_batch(tickets_text: str) -> str:
     try:
         # Split textarea input into individual tickets (one per line), strip blanks
         tickets = [t.strip() for t in tickets_text.strip().splitlines() if t.strip()]
@@ -71,7 +71,7 @@ def classify_batch(tickets_text):
 
 
 # Single prediction examples
-single_examples = [
+SINGLE_EXAMPLES = [
     "My laptop won't turn on and the power light is not working",
     "Need access to the finance shared drive for Q4 reports",
     "Request to purchase 2 new monitors for the design team",
@@ -97,7 +97,7 @@ with gr.Blocks(title="IT Ticket Classifier") as demo:
     with gr.Tabs():
 
         # ── Tab 1: Single Prediction ──────────────────────────────────────────
-        with gr.Tab("Single Prediction"):
+        with gr.Tab("Online Prediction"):
             with gr.Row():
                 with gr.Column():
                     text_input = gr.Textbox(
@@ -111,7 +111,7 @@ with gr.Blocks(title="IT Ticket Classifier") as demo:
                     label_output = gr.Label(num_top_classes=8, label="Classification Scores")
                     metadata_output = gr.Markdown()
 
-            gr.Examples(examples=single_examples, inputs=text_input)
+            gr.Examples(examples=SINGLE_EXAMPLES, inputs=text_input)
 
             submit_btn.click(
                 fn=classify_ticket,
