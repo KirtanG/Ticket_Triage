@@ -1,0 +1,24 @@
+FROM python:3.11-slim
+
+WORKDIR /code
+
+# Install uv for fast dependency resolution
+RUN pip install --no-cache-dir uv
+
+# Copy only requirements-related files first to cache the layer
+COPY pyproject.toml README.md ./
+
+# We install dependencies globally into the system python using uv
+RUN uv pip install --system -e .
+
+# Copy the rest of the application code
+COPY ./app /code/app
+
+# Set the working directory to where the main.py lives
+WORKDIR /code/app
+
+# Expose backend port
+EXPOSE 8080
+
+# Command to run the uvicorn server
+CMD ["python", "main.py"]

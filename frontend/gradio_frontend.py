@@ -1,8 +1,9 @@
 import gradio as gr
 import requests
 from typing import Tuple
+import os
 
-BASE_URL = "http://localhost:8080/api/v1"
+BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8080/api/v1")
 
 def classify_ticket(text: str) -> Tuple[dict, str]:
     try:
