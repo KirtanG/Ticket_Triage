@@ -1,3 +1,4 @@
+import re
 import logging
 
 from fastapi import APIRouter, Request, status
@@ -12,6 +13,11 @@ router = APIRouter(
     tags=["Version 1 Prediction Endpoints"]
 )
 
+def sanitise_ticket(text: str) -> str:
+    text = text.lower()
+    text = re.sub(r'[^a-z0-9\s]', '', text)
+    return text.strip()
+
 @router.post("/predict", summary="Classify Single Ticker")
 async def predict_online( ticket: TicketRequest , request: Request):
     model = request.app.state.classifier
@@ -24,7 +30,7 @@ async def predict_online( ticket: TicketRequest , request: Request):
         )
 
     try:
-        text = ticket.text.lower()
+        text = sanitise_ticket(ticket.text)
 
         predicted_class, confidence, all_scores  = model.predict_single(text)
 
