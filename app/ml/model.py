@@ -7,7 +7,7 @@ from onnxruntime import InferenceSession
 from sklearn.preprocessing import LabelEncoder
 from transformers import AutoTokenizer, ModernBertConfig
 
-from utils.config import settings
+from utils.config import TOKENIZER_PATH, ONNX_MODEL_PATH, LABEL_ENCODER_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +24,9 @@ class TicketClassifier:
         Handles model loading and inference.
         """
         try:
-            self.tokeniser = AutoTokenizer.from_pretrained(settings.tokenizer_path, local_files_only=True)
-            self.ort_session = InferenceSession(path_or_bytes=settings.onnx_model_path)
-            self.label_encoder = joblib.load(filename=settings.label_encoder_path)
+            self.tokeniser = AutoTokenizer.from_pretrained(TOKENIZER_PATH, local_files_only=True)
+            self.ort_session = InferenceSession(path_or_bytes=ONNX_MODEL_PATH)
+            self.label_encoder = joblib.load(filename=LABEL_ENCODER_PATH)
         except Exception as e:
             logger.error(f"Failed to load model!\n{e}")
             raise

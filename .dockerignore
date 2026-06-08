@@ -9,7 +9,3 @@ env/
 .git/
 .gitignore
 .python-version
-uv.lock
-
-# Do not copy artifacts, as we will bind mount them!
-app/artifacts/
