@@ -119,7 +119,9 @@ app/artifacts/
     └── label_encoder.joblib
 ```
 
-I'll upload artifacts to HF Spaces when the live demo is ready.
+It is available here:
+
+HuggingFace Space [Link](https://huggingface.co/spaces/KirtanG/Ticket-Triage)
 
 Install dependencies:
 
